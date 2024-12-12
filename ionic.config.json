@@ -1,7 +1,8 @@
 {
-  "name": "app-demo-v1",
+  "name": "appProducts",
   "integrations": {
     "capacitor": {}
   },
   "type": "angular"
 }
+

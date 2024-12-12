@@ -1,0 +1,12 @@
+<ion-menu contentId="menu-content" menuId="menu-content" side="start">
+  <app-header title="Menú"></app-header>
+  <ion-content>
+    <ion-list>
+      <ion-item routerLink="/home">Inicio</ion-item>
+      <ion-item routerLink="/main/calificaciones">Calificaciones</ion-item>
+      <ion-item routerLink="/settings">Tareas</ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-router-outlet id="menu-content" main></ion-router-outlet>
