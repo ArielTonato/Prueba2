@@ -1,0 +1,18 @@
+<app-header [showMenu]="true" title="Tareas"></app-header>
+<ion-content>
+  <ion-list class="task-list">
+    <ion-item *ngFor="let task of tasks" class="task-item">
+      <ion-label>
+        <h2 class="task-title">{{ task.titulo }}</h2>
+        <p class="task-description">{{ task.descripcion }}</p>
+        <small class="task-date">{{ task.date.toDate() | date }}</small>
+      </ion-label>
+    </ion-item>    
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openTaskModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

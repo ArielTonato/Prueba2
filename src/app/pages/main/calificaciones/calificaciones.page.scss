@@ -1,0 +1,81 @@
+.spacing {
+  margin-top: 20px; /* Ajusta este valor para obtener el espacio deseado */
+}
+ion-header {
+  --background: #1976d2; /* Color de fondo para la barra de herramientas */
+  --color: white; /* Color del texto de la barra de herramientas */
+}
+
+ion-content {
+  padding: 20px;
+}
+
+.combo-box {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* Suprimir el borde doble entre celdas */
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table th {
+  background-color: #f4f4f4; /* Fondo de la cabecera de la tabla */
+  color: #333; /* Color del texto en la cabecera de la tabla */
+}
+
+table td {
+  text-align: left;
+}
+
+.table-container {
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra para el card */
+  border-radius: 5px; /* Bordes redondeados */
+  overflow: hidden; /* Quitar bordes de caja */
+}
+
+ion-card {
+  border: none; /* Quitar borde del card */
+}
+
+.spacing {
+  margin-top: 10px;
+}
+
+ion-footer {
+  text-align: center;
+  padding: 10px;
+}
+/* Estilos para el <ion-header> */
+ion-header {
+--background: #1976d2; /* Color de fondo de la barra de herramientas */
+--color: white; /* Color del texto de la barra de herramientas */
+padding: 10px 20px; /* Espaciado interior */
+text-align: center; /* Centrar el texto */
+}
+
+/* Estilos para el <div class="combo-box"> */
+.combo-box {
+margin-bottom: 20px;
+padding: 10px;
+border-radius: 5px; /* Bordes redondeados */
+background-color: #f0f0f0; /* Fondo gris claro para el combo box */
+box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra suave */
+display: flex;
+align-items: center;
+}
+
+.combo-box ion-label {
+margin-right: 10px; /* Espaciado entre la etiqueta y el ion-select */
+}
+
+.combo-box ion-select {
+flex-grow: 1; /* Aumenta el tamaño para que ocupe todo el espacio disponible */
+max-width: 300px; /* Ancho máximo para mantener el diseño compacto */
+}

@@ -1,10 +1,45 @@
 <app-header [showMenu]="true" title="Calificaciones"></app-header>
 
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Calificaciones</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="combo-box">
+    <ion-label>Seleccione una Materia:</ion-label>
+    <ion-select placeholder="Materias" [(ngModel)]="selectedSubject" (ionChange)="onSubjectChange()">
+      <ion-select-option *ngFor="let subject of subjects" [value]="subject">
+        {{ subject.nombre | titlecase }}
+      </ion-select-option>
+    </ion-select>
+  </div>
+
+  <div class="table-container" *ngIf="selectedSubject">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Información de la Materia</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <table>
+          <tr>
+            <th>Nombre</th>
+            <td>{{ selectedSubject.nombre }}</td>
+          </tr>
+          <tr>
+            <th>Profesor</th>
+            <td>{{ selectedSubject.profesro }}</td>
+          </tr>
+          <tr class="spacing">
+            <th>Calificación</th>
+            <td>{{ selectedSubject.Calificacion }}</td>
+          </tr>
+          <tr class="spacing">
+            <th>Estado de Matrícula</th>
+            <td>{{ matriculaStatus }}</td>
+          </tr>
+        </table>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-footer *ngIf="!subjects.length">
+    <ion-text>No hay materias registradas.</ion-text>
+  </ion-footer>
 </ion-content>

@@ -2,6 +2,7 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Product } from 'src/app/models/product.model';
 import { User } from 'src/app/models/user.model';
+import { AcademicService } from 'src/app/services/academic.service';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 
@@ -11,18 +12,17 @@ import { UtilsService } from 'src/app/services/utils.service';
   styleUrls: ['./add-update-product.component.scss'],
 })
 export class AddUpdateProductComponent  implements OnInit {
-  @Input() product:Product
+  @Input() task: any;  // Cambio de product a task
 
-  utilsSrv = inject(UtilsService)
-  firebaseSvc = inject(FirebaseService);
+  utilsSrv = inject(UtilsService);
+  academicService = inject(AcademicService);  // Inyectamos el servicio de tareas
 
   form = new FormGroup({
     id: new FormControl(''),
-    image: new FormControl('',[Validators.required]),
-    name: new FormControl('',[Validators.required, Validators.minLength(4)]),
-    price: new FormControl(null,[Validators.required, Validators.min(0)]),
-    soldUnits: new FormControl(null,[Validators.required, Validators.min(0)]),
-  })
+    titulo: new FormControl('', [Validators.required, Validators.minLength(4)]),  // Cambié de name a titulo
+    descripcion: new FormControl('', [Validators.required, Validators.minLength(10)]),  // Descripción de la tarea
+    date: new FormControl('', [Validators.required]),  // Fecha de vencimiento
+  });
 
   user = {} as User;
 
@@ -30,51 +30,48 @@ export class AddUpdateProductComponent  implements OnInit {
 
   ngOnInit() {
     this.user = this.utilsSrv.getFromLocalStorage('user');
-    if (this.product) this.form.setValue(this.product);
-  }
-
-  async takeImage()
-  {
-    const dataUrl = ( await this.utilsSrv.takePicture('Imagen del producto')).dataUrl
-    this.form.controls.image.setValue(dataUrl)
-  }
-
-  submit()
-  {
-    if (this.form.valid) {
-
-      if(this.product) this.updateProduct();
-      else this.createProduct()
-
+    if (this.task) {
+      this.form.setValue({
+        id: this.task.id,
+        titulo: this.task.titulo,
+        descripcion: this.task.descripcion,
+        date: this.task.date
+      });  // Inicializamos el formulario con los valores de la tarea si existe
     }
   }
 
-  // ======== Crear Producto =======
-  async createProduct() {
-    let path = `users/${this.user.uid}/products`
+  submit() {
+    if (this.form.valid) {
+      if (this.task) {
+        this.updateTask();  // Llama a la función de actualizar tarea
+      } else {
+        this.createTask();  // Llama a la función de crear tarea
+      }
+    }
+  }
 
+  // ======== Crear Tarea =======
+  async createTask() {
     const loading = await this.utilsSrv.loading();
     await loading.present();
 
-    // === Subir la imagen y obtener la url ===
-    let dataUrl = this.form.value.image;
-    let imagePath = `${this.user.uid}/${Date.now()}`;
+    const newTask: any = {
+      titulo: this.form.value.titulo,
+      descripcion: this.form.value.descripcion,
+      date: this.form.value.date,
+      status: 'pendiente'  // Asignamos un estado por defecto a la tarea
+    };
 
-
-    delete this.form.value.id
-
-    this.firebaseSvc.addDocument(path, this.form.value).then(async res => {
-
+    this.academicService.addTask(newTask).then(async () => {
       this.utilsSrv.dismissModal({ success: true });
 
       this.utilsSrv.showToast({
-        message: 'Producto creado exitosamente',
+        message: 'Tarea creada exitosamente',
         duration: 1500,
         color: 'success',
         position: 'middle',
         icon: 'checkmark-circle-outline'
-      })
-
+      });
     }).catch(error => {
       console.log(error);
 
@@ -84,52 +81,46 @@ export class AddUpdateProductComponent  implements OnInit {
         color: 'primary',
         position: 'middle',
         icon: 'alert-circle-outline'
-      })
-
+      });
     }).finally(() => {
       loading.dismiss();
-    })
-}
-
-private async updateProduct() {
-  let path = `users/${this.user.uid}/products/${this.product.id}`;
-
-  const loading = await this.utilsSrv.loading();
-  await loading.present();
-
-  try {
-    // === Subir la nueva imagen si ha sido modificada ===
-    if (this.form.value.image !== this.product.image) {
-      let dataUrl = this.form.value.image;
-      let imagePath = `${this.user.uid}/${Date.now()}`;
-
-    }
-
-    // === Actualizar el documento ===
-    await this.firebaseSvc.updateDocument(path, this.form.value);
-
-    this.utilsSrv.dismissModal({ success: true });
-
-    this.utilsSrv.showToast({
-      message: 'Producto actualizado exitosamente',
-      duration: 1500,
-      color: 'success',
-      position: 'middle',
-      icon: 'checkmark-circle-outline'
     });
-  } catch (error) {
-    console.log(error);
-
-    this.utilsSrv.showToast({
-      message: error.message,
-      duration: 2500,
-      color: 'primary',
-      position: 'middle',
-      icon: 'alert-circle-outline'
-    });
-  } finally {
-    loading.dismiss();
   }
-}
 
+  // ======== Actualizar Tarea =======
+  private async updateTask() {
+    const loading = await this.utilsSrv.loading();
+    await loading.present();
+
+    const updatedTask: any = {
+      titulo: this.form.value.titulo,
+      descripcion: this.form.value.descripcion,
+      date: this.form.value.date,
+      status: this.task.status  // Mantener el estado original si se está actualizando
+    };
+
+    this.academicService.updateTask(this.task.id, updatedTask).then(async () => {
+      this.utilsSrv.dismissModal({ success: true });
+
+      this.utilsSrv.showToast({
+        message: 'Tarea actualizada exitosamente',
+        duration: 1500,
+        color: 'success',
+        position: 'middle',
+        icon: 'checkmark-circle-outline'
+      });
+    }).catch(error => {
+      console.log(error);
+
+      this.utilsSrv.showToast({
+        message: error.message,
+        duration: 2500,
+        color: 'primary',
+        position: 'middle',
+        icon: 'alert-circle-outline'
+      });
+    }).finally(() => {
+      loading.dismiss();
+    });
+  }
 }

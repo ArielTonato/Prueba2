@@ -15,9 +15,14 @@ const routes: Routes = [
       {
         path: 'calificaciones',
         loadChildren: () => import('./calificaciones/calificaciones.module').then( m => m.CalificacionesPageModule)
+      },
+      {
+        path: 'tareas',
+        loadChildren: () => import('./tareas/tareas.module').then( m => m.TareasPageModule)
       }
     ]
   }
+
 
   
 
